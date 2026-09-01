@@ -9,3 +9,8 @@ out-shakespeare-char/
 out-nodropout/
 *.pt
 *.bin
+*.key
+*.pem
+*.db
+*.sqlite*
+token_usage.current.json*
