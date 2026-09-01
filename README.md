@@ -99,17 +99,19 @@ The **context** arm — the full encyclopedia entry and the formula, with every 
 
 | Contrast | What it isolates | Δ faithful | p |
 |---|---|---|---|
-| context → context_compute | compelling use of a prompt fact | +45.3 | 0.0002 |
-| **context_compute → tools** | **externalising the computation** | **+31.3** | **0.0002** |
-| **tools_optional → tools** | **the full imperative** | **+22.3** | **0.0002** |
-| tools_optional → prohibition_only | forbidding unsourced values | +8.4 | 0.0006 |
-| tools_optional → declare_only | naming the input used | +13.0 | 0.0002 |
+| context → context_compute | the full imperative applied to a prompt fact † | +45.3 | < 0.001 |
+| **context_compute → tools** | **externalising the computation** | **+31.3** | **< 0.001** |
+| **tools_optional → tools** | **the full imperative** | **+22.3** | **< 0.001** |
+| tools_optional → prohibition_only | forbidding unsourced values | +8.4 | < 0.001 |
+| tools_optional → declare_only | naming the input used | +13.0 | < 0.001 |
 | prohibition_only → declare_only | which clause is stronger | +4.6 | 0.021 |
-| declare_only → tools | the remaining imperative | +9.3 | 0.0002 |
+| declare_only → tools | the remaining imperative | +9.3 | < 0.001 |
 
-*Table 4. Permutation tests on the faithful-claim rate, two-sided, whole negotiations shuffled between arms.*
+*Table 4. Permutation tests on the faithful-claim rate, two-sided, whole negotiations shuffled between arms. Reported p-values of `< 0.001` sit at the permutation floor (1/5001). Seven contrasts are reported without multiple-comparison correction; under Holm–Bonferroni the 0.021 result would not survive at α = 0.05, and it should be read as suggestive only.*
 
-Both clauses do real work and neither is sufficient. Naming the input is worth about 1.5 times forbidding unsourced values, and the two decompose almost exactly: 13.0 + 9.3 = 22.3, the full effect. An earlier single-model pilot suggested one clause carried everything; at scale that is false.
+† **The prompt side is not decomposed.** `context_compute` adds three ingredients at once — compelled use, naming the input, and forbidding unsourced values — where the tool side has dedicated arms for each. This contrast therefore measures the full imperative, not any single ingredient, and the asymmetry is a gap in the design rather than a property of the result.
+
+Both clauses do real work on the tool side and neither is sufficient. Naming the input is worth about 1.5 times forbidding unsourced values. The two point estimates happen to sum to the full effect (13.0 + 9.3 = 22.3); this is suggestive of additivity but is arithmetic on point estimates without propagated uncertainty, and should not be read as a tested claim. An earlier single-model pilot suggested one clause carried everything; at scale that is false.
 
 ### 4.1 The pooled figures conceal large per-model differences
 
@@ -128,7 +130,7 @@ The declaration clause is worth +23.4 points for one model and **exactly zero** 
 
 ## 5. Result 3 — externalisation substitutes for a capability
 
-This study was designed to check a null from a single-model pilot: at n=30 on one model, computing the appraisal in-head (93.8%) matched calling a tool (89.1%), p = 0.28. The conclusion drawn was that externalisation adds nothing and the instruction does all the work. At n=400 across four families that conclusion is wrong: holding the imperative constant, moving the computation outside the model is worth **+31.3 points** (permutation test over pooled negotiations, p = 0.0002).
+This study was designed to check a null from a single-model pilot: at n=30 on one model, computing the appraisal in-head (93.8%) matched calling a tool (89.1%), p = 0.28. The conclusion drawn was that externalisation adds nothing and the instruction does all the work. At n=400 across four families that conclusion is wrong: holding the imperative constant, moving the computation outside the model is worth **+31.3 points** (permutation test over pooled negotiations, p < 0.001).
 
 | Model | context_compute (in-head) | tools (fetched) | Gap |
 |---|---|---|---|
@@ -199,6 +201,12 @@ Agents invent supporting detail freely and without prompting — competing buyer
 
 ## 8. Limitations
 
+- **The claim classifier is unvalidated against human labels, and it is load-bearing.** Every figure in Table 3 depends on a rule deciding what counts as an appraisal claim rather than an offer, extracting numbers from prose, and classifying them against the ladder. It was developed against hand-picked examples by its author, which is not validation. The specific risk is systematic rather than random error: if grounded arms produce more formulaic phrasing, the classifier may simply *see* more claims there. A post-hoc check for turns containing a number plus valuation language outside the classifier's vocabulary found the miss rate is indeed higher in ungrounded arms (0.21 and 0.22 missed per caught claim in *off* and *context*, against 0.04 in *tools*), but small in absolute terms: correcting fully would move claim incidence from 0.16 → 4.26 to roughly 0.19 → 4.42. The direction of the concern is real; the magnitude does not threaten the conclusion. This does not substitute for hand-labelling a few hundred lines and reporting an agreement rate, which remains undone and is the cheapest available improvement to the paper.
+
+- **The floor arms are under-sampled relative to the arms they anchor.** *off* and *context* have n=120 against roughly 390 elsewhere, and *context* produced only 37 claims, giving its 8.1% fidelity a confidence interval of [0.0, 25.0]. The "availability is not grounding" conclusion is additionally supported by the collapse in claim incidence, which does not depend on that interval, but the imbalance was a budget decision rather than a design one and should be corrected before the claim is leaned on.
+
+- **All four model families come from the same broad ecosystem.** No GPT, Claude or Gemini family was tested. The central conclusion — that grounding effects are model-specific and cannot be established from a single model — is unaffected, but the specific magnitudes may not transfer to the models most organisations actually deploy. Given that §5 exists precisely because family selection changed the answer, this is the most consequential omission in the study.
+
 - **The seven arms were collected in two invocations on different days** and merged for analysis. All reported contrasts are permutation tests over the merged set, so the comparisons are formal rather than inferred from separate intervals; but provider conditions, and any silent model updates, are not controlled between the two days.
 
 - **Judge reliability was not established.** A cross-family judge decides deal detection and the debt-leak flag. Errors have been observed in both directions in earlier phases. The primary outcome does not depend on it, but the settlement-price and leak figures do.
@@ -224,5 +232,7 @@ The practitioner advice that facts belong in context is right about weights and 
 - **None of it moves the negotiated outcome.** Fidelity varies by 85 points across arms; settlement drift varies by 11 and mostly tracks whether any valuation was available at all.
 
 For practitioners the operational summary is short: putting a fact in the prompt is the cheapest and least effective intervention available; adding two sentences that compel attribution is nearly free and worth 22 points; and a tool is worth what your model's arithmetic is not. Which of these matters most is model-specific, and cannot be determined from a single model.
+
+One scope condition deserves emphasis, because it is easy to over-generalise from these figures. Every number here was produced under a **competing incentive** — an agent instructed to win a negotiation, with a reason to misreport. That is the stressor the design exists to apply, and it is why the fidelity rates are as low as they are. A compliant assistant asked to recall the same fact, with nothing to gain from distorting it, would almost certainly score higher. Whether these effects hold in the settings where such systems are usually deployed — customer-facing assistants under sycophantic rather than adversarial pressure — is an open question this study does not answer.
 
 > Total cost of the reported runs: $47.05 for 2,214 negotiations, 9,332 API calls and 32.7 million tokens. One model accounted for 80% of the spend, its reasoning traces averaging 3,345 completion tokens per call.
