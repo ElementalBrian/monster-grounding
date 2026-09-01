@@ -14,3 +14,4 @@ out-nodropout/
 *.db
 *.sqlite*
 token_usage.current.json*
+logs/v5_merged.jsonl
