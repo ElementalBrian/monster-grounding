@@ -1,0 +1,14 @@
+{
+ "run_id": "20260819-090937",
+ "transcript": "duel_cloud_20260819-090937.jsonl",
+ "trials": 50,
+ "usage": {
+  "kimi-k2.6": {
+   "prompt": 181545,
+   "completion": 890892,
+   "calls": 738
+  }
+ },
+ "cost": 2.988829,
+ "updated": "2026-08-19 13:58:56"
+}

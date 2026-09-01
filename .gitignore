@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+*.log
+logs/token_usage.current.json*
+out-shakespeare-char/
+out-nodropout/
+*.pt
+*.bin
